@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#123d50" />
+    <meta name="description" content="Progressive borewell drilling, casing pipe and customer estimate calculator." />
+    <title>Bharanidharan Borewell Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <div class="screen-app" id="screenApp">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Bharanidharan Borewell Calculator home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M20 4v21m0 0 8-8m-8 8-8-8M10 26h20M13 31h14M16 36h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="7" r="3" fill="currentColor"/></svg>
+          </span>
+          <span class="brand-copy"><strong>Bharanidharan</strong><small>Borewell Calculator</small></span>
+        </a>
+        <div class="topbar-actions">
+          <label class="saved-estimates-control">
+            <span class="sr-only">Saved estimates</span>
+            <select id="savedEstimates" aria-label="Saved estimates">
+              <option value="">Saved estimates</option>
+            </select>
+          </label>
+          <button class="button button-quiet" id="openEstimateButton" type="button" disabled>Open</button>
+          <button class="button button-quiet" id="saveEstimateButton" type="button" disabled>Save estimate</button>
+          <button class="button button-outline" id="newCalculationButton" type="button">Pudhiya Kanakku</button>
+        </div>
+      </header>
+
+      <main class="page" id="top">
+        <section class="welcome-banner" aria-labelledby="pageTitle">
+          <div class="welcome-copy">
+            <p class="eyebrow"><span class="live-dot"></span> SIMPLE-A KANAKKU PODUNGA</p>
+            <h1 id="pageTitle">Borewell estimate,<br /><em>clear-a ready pannunga.</em></h1>
+            <p class="welcome-subtitle">Depth, pipe, selavu ellam serthu customer-kku oru clear estimate.</p>
+          </div>
+          <div class="welcome-note"><span class="note-icon" aria-hidden="true">₹</span><span><strong>Ungal rate, ungal kanakku</strong><small>Slab rates-ai eppovum maathalaam</small></span></div>
+          <div class="banner-orbit orbit-one" aria-hidden="true"></div><div class="banner-orbit orbit-two" aria-hidden="true"></div>
+        </section>
+
+        <div class="workspace-grid">
+          <form id="calculatorForm" class="form-column" novalidate>
+            <section class="section-card" aria-labelledby="customerTitle">
+              <div class="section-heading">
+                <span class="step-number">01</span>
+                <div><p class="section-kicker">OPTIONAL DETAILS</p><h2 id="customerTitle">Customer Vivaram</h2></div>
+                <span class="section-ornament" aria-hidden="true">01</span>
+              </div>
+              <div class="field-grid field-grid-two">
+                <label class="field"><span>Customer Peyar <small>(Customer Name)</small></span><input id="customerName" name="customerName" type="text" maxlength="80" autocomplete="name" placeholder="Peyar enter pannunga" /></label>
+                <label class="field"><span>Mobile Number</span><input id="customerMobile" name="customerMobile" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="e.g. 98765 43210" /><small class="field-error" id="mobileError" aria-live="polite"></small></label>
+                <label class="field"><span>Borewell Location</span><input id="customerLocation" name="customerLocation" type="text" maxlength="120" autocomplete="street-address" placeholder="Oor / area" /></label>
+                <label class="field"><span>Kanakku Thethi <small>(Calculation Date)</small></span><input id="calculationDate" name="calculationDate" type="date" /></label>
+              </div>
+            </section>
+
+            <section class="section-card" aria-labelledby="drillingTitle">
+              <div class="section-heading">
+                <span class="step-number">02</span>
+                <div><p class="section-kicker">PROGRESSIVE RATE</p><h2 id="drillingTitle">Bore Podum Selavu</h2></div>
+                <span class="section-ornament" aria-hidden="true">02</span>
+              </div>
+              <div class="depth-input-row">
+                <label class="field depth-field"><span>Motha Borewell Aazham <small>(Total depth · feet)</small></span><span class="input-with-unit"><input id="totalDepth" name="totalDepth" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 1000" /><span>ADI</span></span><small class="field-error" id="depthError" aria-live="polite"></small></label>
+                <p class="depth-tip"><span aria-hidden="true">↗</span> Ovoru range-kum thani rate set pannalaam. Slab rate andha range feet-kku mattum apply aagum.</p>
+              </div>
+
+              <div class="subsection-heading slab-subheading">
+                <div><h3>Depth Rate Slabs</h3><p>Range overlap illaama, full depth cover aaganum.</p></div>
+                <button class="button button-add" id="addSlabButton" type="button"><span aria-hidden="true">＋</span> Pudhiya Rate Serkkavum</button>
+              </div>
+              <div id="slabsList" class="dynamic-list" aria-live="polite"></div>
+              <div id="slabCoverageStatus" class="coverage-message" role="status" aria-live="polite"></div>
+
+              <div class="template-row">
+                <div class="template-copy"><strong>Rate Template</strong><small>Usual slabs-ai save panni, adutha kanakkula use pannunga.</small></div>
+                <label class="template-select-wrap"><span class="sr-only">Saved rate templates</span><select id="rateTemplates" aria-label="Saved rate templates"><option value="">Template select pannunga</option></select></label>
+                <button class="button button-soft" id="applyTemplateButton" type="button" disabled>Apply</button>
+                <button class="button button-text" id="saveTemplateButton" type="button" disabled>+ Save template</button>
+              </div>
+            </section>
+
+            <section class="section-card" aria-labelledby="casingTitle">
+              <div class="section-heading">
+                <span class="step-number">03</span>
+                <div><p class="section-kicker">OPTIONAL PIPE CHARGES</p><h2 id="casingTitle">Casing Pipe Selavu</h2></div>
+                <span class="section-ornament" aria-hidden="true">03</span>
+              </div>
+              <div class="pipe-grid">
+                <article class="pipe-card pipe-seven">
+                  <div class="pipe-card-heading"><span class="pipe-size">7<span>″</span></span><div><h3>7 Inch Casing Pipe</h3><p>Optional · venumna fill pannunga</p></div></div>
+                  <div class="field-grid field-grid-two">
+                    <label class="field"><span>Casing Pipe Neelam <small>(Feet)</small></span><input data-field="casing7Feet" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0" /></label>
+                    <label class="field"><span>Oru Adikku Kattanam <small>(₹ / feet)</small></span><span class="input-with-unit rupee-input"><span>₹</span><input data-field="casing7Rate" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></span></label>
+                  </div>
+                  <div class="pipe-total"><span>7 Inch Pipe Total</span><strong id="casing7Total">₹0.00</strong></div>
+                  <small class="field-error" id="casing7Error" aria-live="polite"></small>
+                </article>
+                <article class="pipe-card pipe-ten">
+                  <div class="pipe-card-heading"><span class="pipe-size">10<span>″</span></span><div><h3>10 Inch Casing Pipe</h3><p>Optional · venumna fill pannunga</p></div></div>
+                  <div class="field-grid field-grid-two">
+                    <label class="field"><span>Casing Pipe Neelam <small>(Feet)</small></span><input data-field="casing10Feet" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0" /></label>
+                    <label class="field"><span>Oru Adikku Kattanam <small>(₹ / feet)</small></span><span class="input-with-unit rupee-input"><span>₹</span><input data-field="casing10Rate" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></span></label>
+                  </div>
+                  <div class="pipe-total"><span>10 Inch Pipe Total</span><strong id="casing10Total">₹0.00</strong></div>
+                  <small class="field-error" id="casing10Error" aria-live="polite"></small>
+                </article>
+              </div>
+              <div class="casing-grand-row"><span>Motha Casing Pipe Selavu</span><strong id="casingTotal">₹0.00</strong></div>
+            </section>
+
+            <section class="section-card" aria-labelledby="expensesTitle">
+              <div class="section-heading">
+                <span class="step-number">04</span>
+                <div><p class="section-kicker">ADDITIONAL CHARGES</p><h2 id="expensesTitle">Kooduthal Selavugal</h2></div>
+                <span class="section-ornament" aria-hidden="true">04</span>
+              </div>
+              <div class="subsection-heading"><p>Transportation, labour, water… thevaiyana selavugal mattum add pannunga.</p><button class="button button-add" id="addExpenseButton" type="button"><span aria-hidden="true">＋</span> Pudhiya Selavu Serkkavum</button></div>
+              <div id="expensesList" class="dynamic-list expense-list"></div>
+              <div class="expenses-total-row"><span>Motha Kooduthal Selavu</span><strong id="miscTotal">₹0.00</strong></div>
+            </section>
+
+            <section class="section-card advance-card" aria-labelledby="advanceTitle">
+              <div class="section-heading">
+                <span class="step-number">05</span>
+                <div><p class="section-kicker">PAYMENT RECEIVED</p><h2 id="advanceTitle">Munpanam (Advance)</h2></div>
+                <span class="section-ornament" aria-hidden="true">05</span>
+              </div>
+              <div class="advance-input-row"><label class="field"><span>Vaangiya Advance Amount <small>(₹)</small></span><span class="input-with-unit rupee-input"><span>₹</span><input id="advanceAmount" name="advanceAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></span><small class="field-error" id="advanceError" aria-live="polite"></small></label><p class="advance-hint">Advance grand total-ai vida adhigama irundha, balance-ku badhila refund amount kaattuvom.</p></div>
+            </section>
+            <p class="local-data-note"><span aria-hidden="true">⌂</span> Ungal kanakku indha device / browser-la mattum save aagum. Cloud-ku upload aagadhu.</p>
+          </form>
+
+          <aside class="summary-column" aria-label="Cost summary">
+            <section class="summary-card">
+              <div class="summary-card-heading"><div><p class="section-kicker">LIVE ESTIMATE</p><h2>Kanakku Surukkam</h2></div><span class="summary-check" aria-hidden="true">✓</span></div>
+              <div id="summaryStatus" class="summary-status" role="status" aria-live="polite"><span class="status-light"></span><span>Full depth cover pannunga</span></div>
+              <div class="summary-depth"><span>Borewell Aazham</span><strong id="summaryDepth">— <small>ft</small></strong></div>
+              <ul id="summarySlabs" class="summary-breakdown"></ul>
+              <div class="summary-lines">
+                <div><span>7 Inch Casing</span><strong id="summaryCasing7">₹0.00</strong></div>
+                <div><span>10 Inch Casing</span><strong id="summaryCasing10">₹0.00</strong></div>
+                <div><span>Kooduthal Selavugal</span><strong id="summaryMisc">₹0.00</strong></div>
+              </div>
+              <div class="summary-grand"><span>Motha Selavu</span><strong id="summaryGrand">—</strong></div>
+              <div class="summary-advance"><span>Vaangiya Advance</span><strong id="summaryAdvance">₹0.00</strong></div>
+              <div class="summary-balance" id="balancePanel"><div><span id="balanceLabel">Meedhi Kudukka Vendiya Amount</span><small id="balanceNote">Kanakku complete aana udane kaattuvom</small></div><strong id="summaryBalance">—</strong></div>
+              <div class="summary-actions">
+                <button class="button button-primary" id="downloadPdfButton" type="button" disabled><span aria-hidden="true">↓</span> PDF Download</button>
+                <button class="button button-secondary" id="printButton" type="button" disabled><span aria-hidden="true">▤</span> Print Estimate</button>
+                <button class="button button-whatsapp" id="shareButton" type="button" disabled><span aria-hidden="true">◉</span> WhatsApp-la Share</button>
+              </div>
+              <p class="summary-footnote">PDF print dialog moolama generate aagum. Browser-la “Save as PDF” select pannunga.</p>
+            </section>
+            <div class="privacy-card"><span class="privacy-icon" aria-hidden="true">✓</span><p><strong>Ungal data private.</strong><br />Saved estimates indha browser-la mattum irukkum.</p></div>
+          </aside>
+        </div>
+        <footer class="page-footer"><span>BHARANIDHARAN BOREWELL CALCULATOR</span><span>Kanakku clear-na, velai smooth.</span></footer>
+      </main>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <section id="printEstimate" class="print-estimate" aria-label="Printable borewell estimate"></section>
+  </body>
+</html>
